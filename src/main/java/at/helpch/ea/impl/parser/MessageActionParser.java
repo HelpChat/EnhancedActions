@@ -24,6 +24,12 @@ public class MessageActionParser implements EnhancedActionParser {
     }
 
     @Override
+    public boolean isCorrectType(@NotNull Map<@NotNull String, @Nullable Object> actionData) {
+        final var type = (String) actionData.get(ACTION_TYPE_KEY);
+        return "message".equalsIgnoreCase(type);
+    }
+
+    @Override
     public @NotNull Optional<ActionHolder> parse(final @NotNull Map<@NotNull String, @Nullable Object> actionData) {
         final Object unparsedMessage = actionData.get("message");
 

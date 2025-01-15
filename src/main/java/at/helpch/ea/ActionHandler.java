@@ -60,11 +60,14 @@ public class ActionHandler {
             return true;
         }
 
+        //noinspection unchecked
+        final Map<String, Object> actionDataMap = (Map<String, Object>) actionData;
         final ActionHolder actionHolder = enhancedActionParsers.stream()
-            .map(parser -> parser.parse((Map<String, Object>) actionData))
+            .filter(parser -> parser.isCorrectType(actionDataMap))
+            .findFirst()
+            .map(parser -> parser.parse(actionDataMap))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .findFirst()
             .orElse(null);
 
         if (actionHolder == null) {
