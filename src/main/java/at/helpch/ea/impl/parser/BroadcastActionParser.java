@@ -4,6 +4,7 @@ import at.helpch.ea.action.ActionHolder;
 import at.helpch.ea.impl.action.BroadcastAction;
 import at.helpch.ea.parser.EnhancedActionParser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,22 +24,16 @@ public class BroadcastActionParser implements EnhancedActionParser {
     }
 
     @Override
-    public @NotNull Optional<ActionHolder> parse(final @NotNull Map<String, Object> actionData) {
-        final Object unparsedChance = actionData.get("chance");
-        final Object unparsedDelay = actionData.get("delay");
+    public @NotNull Optional<ActionHolder> parse(final @NotNull Map<@NotNull String, @Nullable Object> actionData) {
         final Object unparsedMessage = actionData.get("message");
 
         if (!(unparsedMessage instanceof String)) {
             return Optional.empty();
         }
 
-        final Long chance = unparsedChance instanceof Long ? (Long) unparsedChance : null;
-        final Long delay = unparsedDelay instanceof Long ? (Long) unparsedDelay : null;
-
         return Optional.of(new ActionHolder(
-                new BroadcastAction((String) unparsedMessage),
-                chance,
-                delay
+            new BroadcastAction((String) unparsedMessage),
+            actionData
         ));
 
     }
