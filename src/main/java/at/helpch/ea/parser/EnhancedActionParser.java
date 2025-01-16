@@ -11,7 +11,7 @@ public interface EnhancedActionParser {
 
     String ACTION_TYPE_KEY = "type";
     String DELAY_KEY = "delay";
-    String CHANCE_KEY = "delay";
+    String CHANCE_KEY = "chance";
 
     boolean isCorrectType(final @NotNull Map<@NotNull String, @Nullable Object> actionData);
 
