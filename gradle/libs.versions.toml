@@ -1,5 +1,9 @@
 [versions]
 spigot = "1.20.4-R0.1-SNAPSHOT"
+papi = "2.11.6"
+jetbrains_annotations = "24.0.0"
 
 [libraries]
 spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+papi = { module = "me.clip:placeholderapi", version.ref = "papi" }
+jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }

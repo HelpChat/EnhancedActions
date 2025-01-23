@@ -1,9 +1,10 @@
 package at.helpch.ea;
 
 import at.helpch.ea.action.ActionHolder;
+import at.helpch.ea.impl.parser.BroadcastActionParser;
+import at.helpch.ea.impl.parser.MessageActionParser;
 import at.helpch.ea.parser.ActionParser;
 import at.helpch.ea.parser.EnhancedActionParser;
-import at.helpch.ea.impl.parser.MessageActionParser;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,8 @@ import java.util.Set;
 
 public class ActionHandler {
     static final Set<EnhancedActionParser> DEFAULT_ENHANCED_ACTION_PARSERS = Set.of(
-            MessageActionParser.getInstance()
+        BroadcastActionParser.getInstance(),
+        MessageActionParser.getInstance()
     );
     static final Set<ActionParser> DEFAULT_ACTION_PARSERS = Set.of(
     );
@@ -35,19 +37,20 @@ public class ActionHandler {
 
     /**
      * Parses the given data into an action and executes it.
+     *
      * @param offlinePlayer The player to execute the action for.
-     * @param actionData The data to parse into an action.
+     * @param actionData    The data to parse into an action.
      * @return Whether an action was found from the given data.
      */
     public boolean execute(final @Nullable OfflinePlayer offlinePlayer, final @NotNull Object actionData) {
         // If action data is not a map or contains non-string keys, use normal action parsers.
         if (!(actionData instanceof Map) || ((Map<?, ?>) actionData).keySet().stream().anyMatch(key -> !(key instanceof String))) {
             final ActionHolder actionHolder = actionParsers.stream()
-                    .map(parser -> parser.parse(actionData))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findFirst()
-                    .orElse(null);
+                .map(parser -> parser.parse(actionData))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(null);
 
             if (actionHolder == null) {
                 return false;
@@ -57,12 +60,15 @@ public class ActionHandler {
             return true;
         }
 
+        //noinspection unchecked
+        final Map<String, Object> actionDataMap = (Map<String, Object>) actionData;
         final ActionHolder actionHolder = enhancedActionParsers.stream()
-                .map(parser -> parser.parse((Map<String, Object>) actionData))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst()
-                .orElse(null);
+            .filter(parser -> parser.isCorrectType(actionDataMap))
+            .findFirst()
+            .map(parser -> parser.parse(actionDataMap))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .orElse(null);
 
         if (actionHolder == null) {
             return false;
